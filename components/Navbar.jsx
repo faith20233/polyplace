@@ -91,7 +91,7 @@ const checkActive = (active, setActive, router) => {
 const Navbar = () => {
     const { theme, setTheme } = useTheme();
     const router = useRouter();
-    const [active, setActive] = useState('Explore NFTs');
+    const [active, setActive] = useState('Explore prompts');
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -109,7 +109,7 @@ const Navbar = () => {
                     <div
                         className="flexCenter md:hidden cursor-pointer"
                         onClick={() => {
-                            setActive('Explore NFTs');
+                            setActive('Explore Prompts');
                         }}
                     >
                         <Image src={images.logo02} objectFit="contain" width={40} height={40} alt="logo" />
@@ -120,7 +120,7 @@ const Navbar = () => {
                     <div
                         className="hidden md:flex cursor-pointer"
                         onClick={() => {
-                            setActive('Explore NFTs');
+                            setActive('Explore prompts');
                             setIsOpen(false);
                         }}
                     >
