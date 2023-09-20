@@ -2,19 +2,19 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
-import { NFTContext } from '../context/NFTContext';
+import { promptContext } from '../context/promptContext';
 
-import { Banner, CreatorCard, Loader, NFTCard, SearchBar, withTransition } from '../components';
+import { Banner, CreatorCard, Loader, promptCard, SearchBar, withTransition } from '../components';
 
 import images from '../assets';
 import { getCreators } from '../utils/index';
 import { shortenAddress } from '../utils/index';
 
 const Home = () => {
-    const { fetchNFTs } = useContext(NFTContext);
+    const { fetchprompts } = useContext(promptContext);
     const [hideButtons, setHideButtons] = useState(false);
-    const [nfts, setNfts] = useState([]);
-    const [nftsCopy, setNftsCopy] = useState([]);
+    const [prompts, setprompts] = useState([]);
+    const [promptsCopy, setpromptsCopy] = useState([]);
     const { theme } = useTheme();
     const [activeSelect, setActiveSelect] = useState('Recently Added');
     const [isLoading, setIsLoading] = useState(true);
@@ -25,47 +25,47 @@ const Home = () => {
     const scrollRef = useRef(null);
 
     useEffect(() => {
-        fetchNFTs()
+        fetchprompts()
             .then((items) => {
                 const finalitems = items.filter((v) => v !== null);
-                setNfts(finalitems);
-                setNftsCopy(finalitems);
+                setprompts(finalitems);
+                setpromptsCopy(finalitems);
                 setIsLoading(false);
             });
     }, []);
 
     useEffect(() => {
-        const sortedNfts = [...nfts];
+        const sortedprompts = [...prompts];
 
         switch (activeSelect) {
             case 'Price (low to high)':
-                setNfts(sortedNfts.sort((a, b) => a.price - b.price));
+                setprompts(sortedprompts.sort((a, b) => a.price - b.price));
                 break;
             case 'Price (high to low)':
-                setNfts(sortedNfts.sort((a, b) => b.price - a.price));
+                setprompts(sortedprompts.sort((a, b) => b.price - a.price));
                 break;
             case 'Recently Added':
-                setNfts(sortedNfts.sort((a, b) => b.tokenId - a.tokenId));
+                setprompts(sortedprompts.sort((a, b) => b.tokenId - a.tokenId));
                 break;
             default:
-                setNfts(nfts);
+                setprompts(prompts);
                 break;
         }
     }, [activeSelect]);
 
     const onHandleSearch = (value) => {
-        const filteredNfts = nfts.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
+        const filteredprompts = prompts.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()));
 
-        if (filteredNfts.length) {
-            setNfts(filteredNfts);
+        if (filteredprompts.length) {
+            setprompts(filteredprompts);
         } else {
-            setNfts(nftsCopy);
+            setprompts(promptsCopy);
         }
     };
 
     const onClearSearch = () => {
-        if (nfts.length && nftsCopy.length) {
-            setNfts(nftsCopy);
+        if (prompts.length && promptsCopy.length) {
+            setprompts(promptsCopy);
         }
     };
 
@@ -118,24 +118,24 @@ const Home = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const topCreators = getCreators(nftsCopy);
+    const topCreators = getCreators(promptsCopy);
 
     return (
 
         <div className="flex justify-center sm:px-4 p-12">
             <div className="w-full minmd:w-4/5">
                 <Banner
-                    name="Own a piece of the digital revolution with unique NFT collectibles."
+                    name="Own a piece of the digital revolution with unique prompt collectibles."
                     childStyles="md:text-3xl sm:text-2xl xs:text-xl text-center"
                     parentStyles="justify-start mb-6 h-72 sm:h-60 p-12 xs:p-4 xs:h-44 rounded-3xl"
                 />
 
-                {!isLoading && !nfts.length ? (
-                    <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">The marketplace is empty.</h1>
+                {!isLoading && !prompts.length ? (
+                    <h1 className="font-poppins dark:text-white text-prompt-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">The marketplace is empty.</h1>
                 ) : isLoading ? <Loader /> : (
                     <>
                         <div>
-                            <h1 className="font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
+                            <h1 className="font-poppins dark:text-white text-prompt-black-1 text-2xl minlg:text-4xl font-semibold ml-4 xs:ml-0">
                                 ⭐ Top Creators
                             </h1>
                             <div className="relative flex-1 max-w-full flex mt-3" ref={parentRef}>
@@ -177,7 +177,7 @@ const Home = () => {
 
                         <div className="mt-10">
                             <div className="flexBetween mx-4 xs:mx-0 minlg:mx-8 sm:flex-col sm:items-start">
-                                <h1 className="flex-1 font-poppins dark:text-white text-nft-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">🔥 Hot NFTs</h1>
+                                <h1 className="flex-1 font-poppins dark:text-white text-prompt-black-1 text-2xl minlg:text-4xl font-semibold sm:mb-4">🔥 Hot prompts</h1>
                                 <div className="flex-2 sm:w-full flex flex-row sm:flex-col">
                                     <SearchBar
                                         activeSelect={activeSelect}
@@ -189,16 +189,16 @@ const Home = () => {
                             </div>
                             {showMore ? (
                                 <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                                    {nfts.map((nft) => <NFTCard key={nft.tokenId} nft={nft} />)}
+                                    {prompts.map((prompt) => <promptCard key={prompt.tokenId} prompt={prompt} />)}
                                 </div>
                             ) : (
                                 <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-                                    {nfts.slice(0, 12).map((nft) => <NFTCard key={nft.tokenId} nft={nft} />)}
+                                    {prompts.slice(0, 12).map((prompt) => <promptCard key={prompt.tokenId} prompt={prompt} />)}
                                 </div>
                             )}
                             {!showMore && (
                                 <div className="flex justify-center mt-4">
-                                    <button btnName="Show more" className="mx-2 rounded-xl border border-nft-red-violet text-sm minlg:text-lg py-2 px-6 minlg:px-8 font-poppins font-semibold text-nft-black-1 dark:text-white transition duration-500 hover:bg-nft-red-violet hover:shadow-md" onClick={() => setShowMore(true)}>Show More</button>
+                                    <button btnName="Show more" className="mx-2 rounded-xl border border-prompt-red-violet text-sm minlg:text-lg py-2 px-6 minlg:px-8 font-poppins font-semibold text-prompt-black-1 dark:text-white transition duration-500 hover:bg-prompt-red-violet hover:shadow-md" onClick={() => setShowMore(true)}>Show More</button>
                                 </div>
                             )}
                         </div>
@@ -210,7 +210,7 @@ const Home = () => {
 
                     <button
                         type="button"
-                        className='fixed bottom-12 right-8 z-50 w-12 h-12 cursor-pointer p-2 nft-gradient shadow-lg
+                        className='fixed bottom-12 right-8 z-50 w-12 h-12 cursor-pointer p-2 prompt-gradient shadow-lg
                                 rounded-full focus:ring-purple-500 ring-opacity-0 inline-flex items-center hover:shadow-2xl
                                 focus:outline-none focus:ring-2 focus:ring-offset-2 transform transition duration-500'
                         onClick={handleScrollToTop}>
